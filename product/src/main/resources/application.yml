@@ -1,0 +1,28 @@
+server:
+  port: 3000
+  tomcat:
+    connection-timeout: 2s
+    threads:
+      max: 50
+      min-spare: 5
+
+spring:
+  application:
+    name: product-service
+  datasource:
+    username: user
+    password: password
+    url: jdbc:postgresql://localhost:5431/product
+    hikari:
+      connection-timeout: 2000
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    #        use_sql_comments: true
+    show-sql: false
+
