@@ -16,5 +16,6 @@ jobs:
           cache: maven
       - name: Compile and test application
         run: |
+          cd product
           chmod +x mvnw
           ./mvnw package  
