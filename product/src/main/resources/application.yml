@@ -7,6 +7,8 @@ server:
       min-spare: 5
 
 spring:
+  profiles:
+    active: test-data
   application:
     name: product-service
   datasource:
@@ -25,5 +27,5 @@ spring:
         format_sql: true
     #        use_sql_comments: true
     show-sql: false
-    open-in-view: true
+    open-in-view: false
 

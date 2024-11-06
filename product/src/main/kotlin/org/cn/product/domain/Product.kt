@@ -32,6 +32,5 @@ class Product(
     @Version
     var version: Int? = null
 ) {
-    // No-arg constructor required by JPA
      constructor() : this(id = null, name = "", price = BigDecimal.ZERO)
 }
