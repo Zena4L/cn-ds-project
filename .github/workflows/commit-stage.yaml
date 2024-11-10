@@ -43,37 +43,54 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw clean install
-        working-directory: product  # Navigate to product service directory for building/testing
+        working-directory: product
 
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
 
-#  package:
-#    name: Package and Publish
-#    if: ${{ github.ref == 'refs/heads/main' }}
-#    needs: [ build ]
-#    runs-on: ubuntu-22.04
-#    permissions:
-#      contents: read
-#      packages: write
-#      security-events: write
-#    steps:
-#      - name: Checkout source code
-#        uses: actions/checkout@v3
-#
-#      - name: Setup JDK
-#        uses: actions/setup-java@v3
-#        with:
-#          distribution: temurin
-#          java-version: 17
-#          cache: maven
-#
-#      - name: Log in to Docker Hub
-#        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-#
-#      - name: Build and Push Docker Image
-#        run: |
-#          chmod +x mvnw
-#          ./mvnw spring-boot:build-image \
-#            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-#        working-directory: product
+  package:
+    name: Package and Publish
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [ build ]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Start Docker Compose for Dependencies
+        run: |
+          docker-compose -f deployment/docker/docker-compose.yml up -d ds-postgres config-service
+
+      - name: Wait for Services to be Ready
+        run: |
+          until nc -z localhost 5431; do echo "Waiting for PostgreSQL..."; sleep 2; done
+          until nc -z localhost 8888; do echo "Waiting for Config Service..."; sleep 2; done
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          chmod +x mvnw
+          ./mvnw spring-boot:build-image \
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+        working-directory: product
+
+      - name: Stop Docker Compose Services
+        run: docker-compose -f deployment/docker/docker-compose.yml down
