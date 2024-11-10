@@ -32,7 +32,7 @@ jobs:
 
       - name: Start Docker Compose for Dependencies
         run: |
-          docker-compose -f docker-compose.yml up -d ds-postgres config-service
+          docker-compose -f deployment/docker/docker-compose.yml up -d ds-postgres config-service
 
       - name: Wait for Services to be Ready
         run: |
@@ -43,9 +43,10 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw clean install
+        working-directory: product  # Navigate to product service directory for building/testing
 
       - name: Stop Docker Compose Services
-        run: docker-compose -f docker-compose.yml down
+        run: docker-compose -f deployment/docker/docker-compose.yml down
 
   package:
     name: Package and Publish
@@ -75,3 +76,4 @@ jobs:
           chmod +x mvnw
           ./mvnw spring-boot:build-image \
             -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+        working-directory: product  # Navigate to product service directory for packaging
