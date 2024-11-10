@@ -14,19 +14,6 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    services:
-      ds-postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: product
-        ports:
-          - 5431:5432
-      config-service:
-        image: zena07/dn-config
-        ports:
-          - 8888:8888
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -37,6 +24,11 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: maven
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
       - name: Start Docker Compose for Dependencies
         run: |
@@ -83,4 +75,3 @@ jobs:
           chmod +x mvnw
           ./mvnw spring-boot:build-image \
             -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-      
