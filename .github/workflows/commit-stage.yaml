@@ -1,0 +1,86 @@
+name: Commit Stage
+on:
+  push
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: zena07/product-service
+  VERSION: latest
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      security-events: write
+    services:
+      ds-postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: product
+        ports:
+          - 5431:5432
+      config-service:
+        image: zena07/dn-config
+        ports:
+          - 8888:8888
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Start Docker Compose for Dependencies
+        run: |
+          docker-compose -f docker-compose.yml up -d ds-postgres config-service
+
+      - name: Wait for Services to be Ready
+        run: |
+          until nc -z localhost 5431; do echo "Waiting for PostgreSQL..."; sleep 2; done
+          until nc -z localhost 8888; do echo "Waiting for Config Service..."; sleep 2; done
+
+      - name: Build, Unit Test, and Integration Test
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+
+      - name: Stop Docker Compose Services
+        run: docker-compose -f docker-compose.yml down
+
+  package:
+    name: Package and Publish
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [ build ]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and Push Docker Image
+        run: |
+          chmod +x mvnw
+          ./mvnw spring-boot:build-image \
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+      

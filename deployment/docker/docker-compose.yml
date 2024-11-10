@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  ds-postgres:
+    image: "postgres:latest"
+    container_name: ds-postgres
+    ports:
+      - "5431:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=product
+
+  product-service:
+    depends_on:
+      - ds-postgres
+      - config-service
+    image: zena07/product-service
+    container_name: product-service
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ds-postgres:5432/product
+      - SPRING_PROFILE_ACTIVE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - BPL_DEBUG_ENABLED=true
+
+  config-service:
+    image: zena07/dn-config
+    container_name: config-service
+    ports:
+      - "8888:8888"
+    environment:
+      - BPL_JVM_THREAD_COUNT=50

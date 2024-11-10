@@ -59,6 +59,21 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>zena07/dn-config:latest</name>
+						<env>
+							<BP_JVM_VERSION>17.*</BP_JVM_VERSION>
+						</env>
+					</image>
+					<docker>
+						<publishRegistry>
+							<username>project.findProperty("registryUsername")</username>
+							<password>project.findProperty("registryToken")</password>
+							<url>docker.io</url>
+						</publishRegistry>
+					</docker>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
