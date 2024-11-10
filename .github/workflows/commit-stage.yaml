@@ -48,32 +48,32 @@ jobs:
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
 
-  package:
-    name: Package and Publish
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs: [ build ]
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-      security-events: write
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: maven
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Build and Push Docker Image
-        run: |
-          chmod +x mvnw
-          ./mvnw spring-boot:build-image \
-            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-        working-directory: product  # Navigate to product service directory for packaging
+#  package:
+#    name: Package and Publish
+#    if: ${{ github.ref == 'refs/heads/main' }}
+#    needs: [ build ]
+#    runs-on: ubuntu-22.04
+#    permissions:
+#      contents: read
+#      packages: write
+#      security-events: write
+#    steps:
+#      - name: Checkout source code
+#        uses: actions/checkout@v3
+#
+#      - name: Setup JDK
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: temurin
+#          java-version: 17
+#          cache: maven
+#
+#      - name: Log in to Docker Hub
+#        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+#
+#      - name: Build and Push Docker Image
+#        run: |
+#          chmod +x mvnw
+#          ./mvnw spring-boot:build-image \
+#            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+#        working-directory: product
