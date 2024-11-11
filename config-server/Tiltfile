@@ -1,0 +1,11 @@
+# Build config-server Service
+custom_build(
+    ref = 'config-server',
+    command = './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=$EXPECTED_REF',
+    deps = ['config-server/pom.xml', 'config-server/src']
+)
+
+# Deploy config-server Service
+k8s_yaml(['/k8s/deployment.yml', '/k8s/service.yml'])
+
+k8s_resource('config-server', port_forwards=['8888'])

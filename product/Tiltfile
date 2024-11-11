@@ -1,0 +1,11 @@
+# Build Product Service
+custom_build(
+    ref = 'product-service',
+    command = './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=$EXPECTED_REF',
+    deps = ['product/pom.xml', 'product/src']
+)
+
+# Deploy Product Service
+k8s_yaml(['/k8s/deployment.yml', '/k8s/service.yml'])
+
+k8s_resource('product-service', port_forwards=['3000'])
