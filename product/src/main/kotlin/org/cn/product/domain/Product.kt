@@ -32,5 +32,5 @@ class Product(
     @Version
     var version: Int? = null
 ) {
-     constructor() : this(id = null, name = "", price = BigDecimal.ZERO)
+    constructor() : this(id = null, name = "", price = BigDecimal.ZERO)
 }

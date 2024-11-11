@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ds-postgres
+  labels:
+    db: ds-postgres
+spec:
+  selector:
+    matchLabels:
+      db: ds-postgres
+  template:
+    metadata:
+      labels:
+        db: ds-postgres
+    spec:
+      containers:
+        - name: ds-postgres
+          image: postgres:latest
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: product
+          resources:
+            requests:
+              cpu: 100m
+              memory: 60Mi
+            limits:
+              cpu: 200m
+              memory: 120Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ds-postgres
+  labels:
+    db: ds-postgres
+spec:
+  type: ClusterIP
+  selector:
+    db: ds-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
