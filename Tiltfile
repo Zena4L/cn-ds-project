@@ -19,3 +19,14 @@ custom_build(
 # Deploy Product Service
 k8s_yaml(['product/k8s/deployment.yml', 'product/k8s/service.yml'])
 k8s_resource('product-service', port_forwards=['3000'])
+
+# Build and Deploy Order Service
+custom_build(
+    ref = 'order-service',
+    command = './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=$EXPECTED_REF',
+    deps = ['order-service/build.gradle.kts', 'order-service/src']
+)
+
+# Deploy Order Service
+k8s_yaml(['order-service/k8s/deployment.yml', 'order-service/k8s/service.yml'])
+k8s_resource('order-service', port_forwards=['3002'])

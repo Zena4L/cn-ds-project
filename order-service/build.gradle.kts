@@ -59,3 +59,19 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
+//    builder = "docker.io/paketobuildpacks/builder-jammy-base"
+    imageName = "zena07/${project.name}:latest"
+    environment.set(mapOf("BP_JVM_VERSION" to "17"))
+
+    docker {
+        publishRegistry {
+            username = project.findProperty("registryUsername") as String?
+            password = project.findProperty("registryToken") as String?
+            url = project.findProperty("registryUrl") as String?
+        }
+    }
+}
+
+

@@ -4,7 +4,8 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: zena07/product-service
+  PRODUCT_IMAGE_NAME: zena07/product-service
+  ORDER_IMAGE_NAME: zena07/order-service
   VERSION: latest
 
 jobs:
@@ -39,11 +40,17 @@ jobs:
           until nc -z localhost 5431; do echo "Waiting for PostgreSQL..."; sleep 2; done
           until nc -z localhost 8888; do echo "Waiting for Config Service..."; sleep 2; done
 
-      - name: Build, Unit Test, and Integration Test
+      - name: Build, Unit Test, and Integration Test Product Service
         run: |
           chmod +x mvnw
           ./mvnw clean install
         working-directory: product
+
+      - name: Build, Unit Test, and Integration Test Order Service
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+        working-directory: order-service
 
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
@@ -85,12 +92,19 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Product Service Docker Image
         run: |
           chmod +x mvnw
           ./mvnw spring-boot:build-image \
-            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.PRODUCT_IMAGE_NAME }}:${{ env.VERSION }}
         working-directory: product
+
+      - name: Build and Push Order Service Docker Image
+        run: |
+          chmod +x mvnw
+          ./mvnw spring-boot:build-image \
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.ORDER_IMAGE_NAME }}:${{ env.VERSION }}
+        working-directory: order-service
 
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
