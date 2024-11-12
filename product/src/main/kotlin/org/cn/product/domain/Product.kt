@@ -17,7 +17,7 @@ class Product(
     var id: Int? = null,
 
     @Column(nullable = false)
-    var name: String = "",  // Provide default values for non-nullable properties
+    var name: String = "",
 
     @Column(nullable = false)
     var price: BigDecimal = BigDecimal.ZERO,
