@@ -20,6 +20,9 @@ class Order(
     var productName: String = "",
 
     @Column(nullable = false)
+    var productId: Int = 0,
+
+    @Column(nullable = false)
     var productPrice: BigDecimal = BigDecimal.ZERO,
 
     @Column(nullable = false)
@@ -42,6 +45,7 @@ class Order(
         id = null,
         productName = " ",
         productPrice = BigDecimal.ZERO,
+        productId = 0,
         quantity = 0,
         orderStatus = OrderStatus.PENDING,
         createdAt = null,
