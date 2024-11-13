@@ -8,3 +8,7 @@ object ValidationMessages {
     const val QUANTITY_MSG = "This field should be a min of $MIN_VALUE and max of $MAX_VALUE"
 
 }
+
+object ErrorMessages {
+    const val INTERNAL_SERVER_ERROR_MSG = "Something went wrong !!"
+}

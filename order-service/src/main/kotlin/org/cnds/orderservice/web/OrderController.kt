@@ -18,7 +18,7 @@ class OrderController (private val orderService: OrderService){
     fun getAllOrders() = orderService.getAllOrders()
 
     @PostMapping
-    suspend fun submitOrder(@Valid @RequestBody orderRequest: OrderRequest) : Order {
+    suspend fun submitOrder( @RequestBody orderRequest: OrderRequest) : Order {
         return orderService.submitOrder(orderRequest)
     }
 

@@ -28,3 +28,6 @@ management:
     web:
       exposure:
         include: refresh
+
+client:
+  product-service-uri: http://localhost:3000/api/v1
