@@ -1,26 +1,33 @@
 package org.cnds.orderservice.domain
 
-import kotlinx.coroutines.flow.Flow
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.cnds.orderservice.dtos.OrderRequest
+import org.springframework.stereotype.Service
 
-@Component
-class OrderServiceImpl(
-    @Autowired val orderRepository: OrderRepository
-) : OrderService {
+@Service
+class OrderServiceImpl(private val orderRepository: OrderRepository) : OrderService {
 
-    override fun getProduct(): Flow<Order> {
-        return orderRepository.findAll()
-    }
 
-    override suspend fun submitOrder(productId: Int, quantity: Int): Order? {
-        val order = buildRejectOrder(productId, quantity)
-        return orderRepository.save(order)
+    override fun getAllOrders() = orderRepository.findAll()
+
+    override suspend fun submitOrder(orderRequest: OrderRequest): Order {
+        val order = buildRejectOrder(orderRequest.productId, orderRequest.quantity, orderRequest.productName, orderRequest.productPrice)
+        return orderRepository.save(order)  // This will handle the insertion correctly
     }
 
     companion object {
-        fun buildRejectOrder(productId: Int, quantity: Int): Order {
-            return Order(id = productId, quantity = quantity, orderStatus = OrderStatus.REJECTED)
+        fun buildRejectOrder(
+            productId: Int,
+            quantity: Int,
+            productName: String,
+            productPrice: Int
+        ): Order {
+            return Order.of(
+                productName = productName,
+                productId = productId,
+                productPrice = productPrice,
+                quantity = quantity,
+                orderStatus = OrderStatus.REJECTED
+            )
         }
     }
 

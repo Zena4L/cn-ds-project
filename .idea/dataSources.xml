@@ -10,14 +10,14 @@
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+        <property name="com.intellij.clouds.kubernetes.db.resource.type" value="Deployment" />
         <property name="com.intellij.clouds.kubernetes.db.container.port" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="order_service@localhost" uuid="a1160a11-a1f9-46ae-80c0-b8852ea60a7b">
+    <data-source source="LOCAL" name="order_service@localhost" uuid="6db415a3-3dfa-4e7a-9e56-20e9341bf737">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <imported>true</imported>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5431/order_service</jdbc-url>
       <jdbc-additional-properties>
