@@ -11,6 +11,11 @@ services:
     volumes:
       - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  ds-redis:
+    image: "redis:latest"
+    container_name: ds-redis
+    ports:
+      - "6379:6379"
 
   product-service:
     depends_on:
