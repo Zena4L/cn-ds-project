@@ -57,3 +57,19 @@ services:
       - "8888:8888"
     environment:
       - BPL_JVM_THREAD_COUNT=50
+
+  edge-service:
+    image: zena07/edge-service
+    container_name: edge-service
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+      - PRODUCT_SERVICE_URL=http://product-service:3000
+      - ORDER_SERVICE_URL=http://order-service:3002
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - LOGGING_LEVEL_IO_GITHUB_RESILIENCE4J=DEBUG
+

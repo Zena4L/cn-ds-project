@@ -6,6 +6,7 @@ env:
   REGISTRY: docker.io
   PRODUCT_IMAGE_NAME: zena07/product-service
   ORDER_IMAGE_NAME: zena07/order-service
+  EDGE_IMAGE_NAME: zena07/edge-service
   VERSION: latest
 
 jobs:
@@ -33,12 +34,13 @@ jobs:
 
       - name: Start Docker Compose for Dependencies
         run: |
-          docker-compose -f deployment/docker/docker-compose.yml up -d ds-postgres config-service
+          docker-compose -f deployment/docker/docker-compose.yml up -d ds-postgres config-service ds-redis
 
       - name: Wait for Services to be Ready
         run: |
           until nc -z localhost 5431; do echo "Waiting for PostgreSQL..."; sleep 2; done
           until nc -z localhost 8888; do echo "Waiting for Config Service..."; sleep 2; done
+          until nc -z localhost 6379; do echo "Waiting for Redis..."; sleep 2; done
 
       - name: Build, Unit Test, and Integration Test Product Service
         run: |
@@ -51,6 +53,12 @@ jobs:
           chmod +x gradlew
           ./gradlew clean build
         working-directory: order-service
+
+      - name: Build and Test Edge Service
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+        working-directory: edge-service
 
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
@@ -82,12 +90,13 @@ jobs:
 
       - name: Start Docker Compose for Dependencies
         run: |
-          docker-compose -f deployment/docker/docker-compose.yml up -d ds-postgres config-service
+          docker-compose -f deployment/docker/docker-compose.yml up -d ds-postgres config-service ds-redis
 
       - name: Wait for Services to be Ready
         run: |
           until nc -z localhost 5431; do echo "Waiting for PostgreSQL..."; sleep 2; done
           until nc -z localhost 8888; do echo "Waiting for Config Service..."; sleep 2; done
+          until nc -z localhost 6379; do echo "Waiting for Redis..."; sleep 2; done
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -104,6 +113,13 @@ jobs:
           chmod +x gradlew
           ./gradlew bootBuildImage --imageName=${{ env.REGISTRY }}/${{ env.ORDER_IMAGE_NAME }}:${{ env.VERSION }}
         working-directory: order-service
+
+      - name: Build and Push Edge Service Docker Image
+        run: |
+          chmod +x mvnw
+          ./mvnw spring-boot:build-image \
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.EDGE_IMAGE_NAME }}:${{ env.VERSION }}
+        working-directory: edge-service
 
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
