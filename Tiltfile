@@ -20,13 +20,25 @@ custom_build(
 k8s_yaml(['product/k8s/deployment.yml', 'product/k8s/service.yml'])
 k8s_resource('product-service', port_forwards=['3000'])
 
-# Build and Deploy Order Service
+## Build and Deploy Order Service
+ custom_build(
+     ref = 'order-service',
+     command = './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=$EXPECTED_REF',
+     deps = ['order-service/build.gradle.kts', 'order-service/src']
+ )
+
+ # Deploy Order Service
+ k8s_yaml(['order-service/k8s/deployment.yml', 'order-service/k8s/service.yml'])
+ k8s_resource('order-service', port_forwards=['3002'])
+
+
+# Build and Deploy egde Service
 custom_build(
-    ref = 'order-service',
+    ref = 'edge-service',
     command = './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=$EXPECTED_REF',
-    deps = ['order-service/build.gradle.kts', 'order-service/src']
+    deps = ['edge-service/build.gradle.kts', 'edge-service/src']
 )
 
-# Deploy Order Service
-k8s_yaml(['order-service/k8s/deployment.yml', 'order-service/k8s/service.yml'])
-k8s_resource('order-service', port_forwards=['3002'])
+# Deploy edge Service
+k8s_yaml(['edge-service/k8s/deployment.yml', 'edge-service/k8s/service.yml'])
+k8s_resource('edge-service', port_forwards=['8080'])
