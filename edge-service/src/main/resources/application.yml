@@ -10,30 +10,61 @@ spring:
     name: edge-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
-#  config:
-#    import: "optional:classpath:"
-#  cloud:
-#    config:
-#      uri: "http://localhost:8888"
-#      request-connect-timeout: 2000
-#      request-read-timeout: 5000
-#      retry:
-#        max-attempts: 6
-#        initial-interval: 1000
-#        max-interval: 2000
-#        multiplier: 1.1
-#      fail-fast: true
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+        pool:
+          type: elastic
+          max-idle-time: 15s
+          max-life-time: 60s
       routes:
-        - id : product-route
+        - id: product-route
           uri: ${PRODUCT_SERVICE_URL:http://localhost:3000/api/v1}/product
           predicates:
             - Path=/api/v1/product/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: productCircuitBreaker
+                fallbackUri: forward:/product-fallback
         - id: order-route
           uri: ${ORDER_SERVICE_URL:http://localhost:3002/api/v1}/order
           predicates:
             - Path=/api/v1/order/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orderCircuitBreaker
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            methods: GET
+            series: SERVER_ERROR
+            exceptions: java.io.IOException,java.util.concurrent.TimeoutException
+            backoff:
+              firstBackoff: 50ms
+              factor: 2
+              basedOnPreviousValue: false
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 20
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15000
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG
 
 
 
