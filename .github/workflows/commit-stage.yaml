@@ -7,6 +7,7 @@ env:
   PRODUCT_IMAGE_NAME: zena07/product-service
   ORDER_IMAGE_NAME: zena07/order-service
   EDGE_IMAGE_NAME: zena07/edge-service
+  DELIVERY_IMAGE_NAME: zena07/delivery-service
   VERSION: latest
 
 jobs:
@@ -25,7 +26,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
+          cache: maven
 
       - name: Install Docker Compose
         run: |
@@ -60,6 +61,12 @@ jobs:
           ./mvnw clean install
         working-directory: edge-service
 
+      - name: Build and Test Delivery Service
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install
+        working-directory: delivery-service
+
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
 
@@ -81,7 +88,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
+          cache: maven
 
       - name: Install Docker Compose
         run: |
@@ -120,6 +127,13 @@ jobs:
           ./mvnw spring-boot:build-image \
             -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.EDGE_IMAGE_NAME }}:${{ env.VERSION }}
         working-directory: edge-service
+
+      - name: Build and Push Delivery Service Docker Image
+        run: |
+          chmod +x mvnw
+          ./mvnw spring-boot:build-image \
+            -Dspring-boot.build-image.imageName=${{ env.REGISTRY }}/${{ env.DELIVERY_IMAGE_NAME }}:${{ env.VERSION }}
+        working-directory: delivery-service
 
       - name: Stop Docker Compose Services
         run: docker-compose -f deployment/docker/docker-compose.yml down
