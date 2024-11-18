@@ -1,7 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    db: ds-postgres
+data:
+  init.sql: |
+    CREATE DATABASE product;
+    CREATE DATABASE order_service;
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  ds-postgres
+  name: ds-postgres
   labels:
     db: ds-postgres
 spec:
@@ -21,8 +34,6 @@ spec:
               value: user
             - name: POSTGRES_PASSWORD
               value: password
-            - name: POSTGRES_DB
-              value: product
           resources:
             requests:
               cpu: 100m
@@ -30,6 +41,13 @@ spec:
             limits:
               cpu: 200m
               memory: 120Mi
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-config-volume
+      volumes:
+        - name: postgres-config-volume
+          configMap:
+            name: postgres-config
 
 ---
 
