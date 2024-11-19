@@ -45,7 +45,11 @@ dependencies {
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:r2dbc")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation ("com.squareup.okhttp3:mockwebserver")
+    testImplementation("com.squareup.okhttp3:mockwebserver")
+    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
+    implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka")
+    testImplementation("org.springframework.cloud:spring-cloud-stream-test-binder")
+
 }
 dependencyManagement {
     imports {

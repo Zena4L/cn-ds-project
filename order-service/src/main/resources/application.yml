@@ -21,6 +21,14 @@ spring:
         max-interval: 2000
         multiplier: 1.1
       fail-fast: true
+#    function:
+#      definition: dispatchOrder
+#    stream:
+#      bindings:
+#        dispatchOrder-in-0:
+#          destination: order-dispatched
+#          group: ${spring.application.name}
+
 
 
 management:
