@@ -9,4 +9,5 @@ interface OrderService {
     fun getAllOrders() : Flow<Order>
     suspend fun submitOrder(orderRequest: OrderRequest): Order
     fun consumeOrderDispatchedEvent(it: Flow<OrderDispatchMessage>) : Flow<Order>
+    fun publishOrderAcceptedEvent(order: Order)
 }
