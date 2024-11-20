@@ -84,10 +84,26 @@ services:
     container_name: delivery-service
     depends_on:
       - config-service
+      - kafka
     ports:
       - "3006:3006"
     environment:
       - BPL_JVM_THREAD_COUNT=50
+      - SERVER_PORT=3006
+      - SERVER_TOMCAT_CONNECTION_TIMEOUT=2s
+      - SERVER_TOMCAT_THREADS_MAX=50
+      - SERVER_TOMCAT_THREADS_MIN_SPARE=5
+      - SERVER_SHUTDOWN=graceful
+      - SPRING_CLOUD_FUNCTION_DEFINITION=pack|label
+      - SPRING_CLOUD_STREAM_BINDINGS_PACKLABEL_IN_0_DESTINATION=order-accepted
+      - SPRING_CLOUD_STREAM_BINDINGS_PACKLABEL_IN_0_CONTENT_TYPE=application/json
+      - SPRING_CLOUD_STREAM_BINDINGS_PACKLABEL_OUT_0_DESTINATION=order-dispatched
+      - SPRING_CLOUD_STREAM_BINDINGS_PACKLABEL_OUT_0_CONTENT_TYPE=application/json
+      - SPRING_CLOUD_STREAM_DEFAULT_BINDER=kafka
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+
 
   edge-service:
     image: zena07/edge-service
