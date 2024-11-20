@@ -30,7 +30,7 @@ services:
       - "9092:9092"
       - "9093:9093"
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://127.0.0.1:9093
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://host.docker.internal:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
@@ -70,7 +70,6 @@ services:
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
       - BPL_DEBUG_ENABLED=true
 
-
   config-service:
     image: zena07/dn-config
     container_name: config-service
@@ -80,11 +79,11 @@ services:
       - BPL_JVM_THREAD_COUNT=50
 
   delivery-service:
-    image: zena07/delivery-service
-    container_name: delivery-service
     depends_on:
       - config-service
       - kafka
+    image: zena07/delivery-service
+    container_name: delivery-service
     ports:
       - "3006:3006"
     environment:
@@ -104,7 +103,6 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
 
-
   edge-service:
     image: zena07/edge-service
     container_name: edge-service
@@ -115,8 +113,7 @@ services:
       - BPL_JVM_THREAD_COUNT=50
       - PRODUCT_SERVICE_URL=http://product-service:3000
       - ORDER_SERVICE_URL=http://order-service:3002
-      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_HOST=ds-redis
       - SPRING_DATA_REDIS_PORT=6379
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
       - LOGGING_LEVEL_IO_GITHUB_RESILIENCE4J=DEBUG
-
