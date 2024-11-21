@@ -25,6 +25,18 @@ spring:
         max-interval: 2000
         multiplier: 1.1
       fail-fast: false
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          keycloak:
+#            client-id: edge-service
+#            client-secret: ds-keycloak-secret
+#            scope:
+#              - openid
+#        provider:
+#          keycloak:
+#            issuer-uri: http://localhost:9000/realms/ds
 #    gateway:
 #      httpclient:
 #        connect-timeout: 2000
