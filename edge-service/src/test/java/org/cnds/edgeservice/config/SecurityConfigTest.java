@@ -12,42 +12,43 @@ import org.springframework.security.test.web.reactive.server.SecurityMockServerC
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import static reactor.core.publisher.Mono.when;
+import static org.mockito.Mockito.when;
 
-//@WebFluxTest
-//@Import(SecurityConfig.class)
+
+@WebFluxTest
+@Import(SecurityConfig.class)
 class SecurityConfigTest {
 
-//    @Autowired
-//    private WebTestClient webClient;
-//
-//    @MockBean
-//    private ReactiveClientRegistrationRepository reactiveClientRegistrationRepository;
-//
-//    @Test
-//    void whenLogoutAuthenticatedAndWithCsrfTokenThen302() {
-//        // Mock the reactiveClientRegistrationRepository response
-//        when(reactiveClientRegistrationRepository.findByRegistrationId("test"))
-//                .thenReturn(Mono.just(testClientRegistration()));
-//
-//        // Simulate a logged-in user with CSRF protection
-//        webClient
-//                .mutateWith(SecurityMockServerConfigurers.csrf()) // Ensure CSRF is configured
-//                .mutateWith(SecurityMockServerConfigurers.mockOidcLogin()) // Simulate login
-//                .post()
-//                .uri("/logout")
-//                .exchange()
-//                .expectStatus().isFound(); // Expect HTTP 302 redirect
-//    }
-//
-//    private ClientRegistration testClientRegistration() {
-//        return ClientRegistration.withRegistrationId("test")
-//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                .clientId("test")
-//                .clientSecret("secret")
-//                .authorizationUri("https://sso.polarbookshop.com/auth")
-//                .tokenUri("https://sso.polarbookshop.com/token")
-//                .redirectUri("https://polarbookshop.com")
-//                .build();
-//    }
+    @Autowired
+    private WebTestClient webClient;
+
+    @MockBean
+    private ReactiveClientRegistrationRepository reactiveClientRegistrationRepository;
+
+    @Test
+    void whenLogoutAuthenticatedAndWithCsrfTokenThen302() {
+
+        when(reactiveClientRegistrationRepository.findByRegistrationId("test"))
+                .thenReturn(Mono.just(testClientRegistration()));
+
+
+        webClient
+                .mutateWith(SecurityMockServerConfigurers.csrf())
+                .mutateWith(SecurityMockServerConfigurers.mockOidcLogin())
+                .post()
+                .uri("/logout")
+                .exchange()
+                .expectStatus().isFound();
+    }
+
+    private ClientRegistration testClientRegistration() {
+        return ClientRegistration.withRegistrationId("test")
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .clientId("test")
+                .clientSecret("secret")
+                .authorizationUri("https://sso.polarbookshop.com/auth")
+                .tokenUri("https://sso.polarbookshop.com/token")
+                .redirectUri("https://polarbookshop.com")
+                .build();
+    }
 }
