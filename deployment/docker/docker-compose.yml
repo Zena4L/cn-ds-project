@@ -106,6 +106,8 @@ services:
   edge-service:
     image: zena07/edge-service
     container_name: edge-service
+    depends_on:
+      - ds-keycloak
     ports:
       - "9000:9000"
       - "9001:9001"
