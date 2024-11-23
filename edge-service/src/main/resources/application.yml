@@ -65,6 +65,7 @@ spring:
 #                name: orderCircuitBreaker
 #      default-filters:
 #        - SaveSession
+#        - TokenRelay
 #        - name: RequestRateLimiter
 #          args:
 #            redis-rate-limiter:
