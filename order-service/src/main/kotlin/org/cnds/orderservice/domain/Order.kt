@@ -1,7 +1,9 @@
 package org.cnds.orderservice.domain
 
+import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.LastModifiedBy
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Table
@@ -27,6 +29,12 @@ data class Order(
 
     @LastModifiedDate
     val updatedAt: Instant? = null,
+
+    @CreatedBy
+    val createdBy: String? = null,
+
+    @LastModifiedBy
+    val lastModifiedBy: String? = null,
 
     @Version
     val version: Int? = null

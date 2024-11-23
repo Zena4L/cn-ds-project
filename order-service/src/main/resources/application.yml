@@ -5,6 +5,11 @@ spring:
     timeout-per-shutdown-phase: 15s
   application:
     name: order-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/PolarBookshop
   sql:
     init:
       mode: always
