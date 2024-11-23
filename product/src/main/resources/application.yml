@@ -11,6 +11,11 @@ spring:
     active: test-data
   application:
     name: product-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/PolarBookshop
   datasource:
     username: user
     password: password
