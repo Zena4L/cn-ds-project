@@ -15,6 +15,7 @@ class SecurityConfig {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests { auth ->
+            auth.requestMatchers("/actuator/**").permitAll()
             auth.requestMatchers(HttpMethod.GET, "/", "/api/v1/product/**").permitAll()
             auth.anyRequest().hasRole("employee")
         }

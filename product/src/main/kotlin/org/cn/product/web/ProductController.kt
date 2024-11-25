@@ -5,6 +5,8 @@ import org.cn.product.domain.Product
 import org.cn.product.domain.ProductService
 import org.cn.product.dtos.ProductRequest
 import org.cn.product.dtos.ProductUpdated
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,10 +24,16 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/product")
 class ProductController(private val productService: ProductService) {
 
+    companion object {
+        @JvmStatic
+        val logger: Logger = LoggerFactory.getLogger(ProductController::class.java)
+    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun createProduct(@RequestBody @Valid request: ProductRequest): Product {
+        logger.info("Creating product ${request.name}")
         return productService.createProduct(request)
     }
 
@@ -34,6 +42,7 @@ class ProductController(private val productService: ProductService) {
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
     ): Page<Product> {
+        logger.info("Fetching all product")
         return productService.getAllProducts(page, size)
 
     }
@@ -48,6 +57,7 @@ class ProductController(private val productService: ProductService) {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteProduct(@PathVariable("id") id: Int) {
+        logger.info("Deleting product with id : $id")
         productService.deleteProduct(id)
     }
 }

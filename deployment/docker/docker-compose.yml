@@ -37,10 +37,46 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    depends_on:
+      - loki
+    ports:
+      - "2000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_SECURITY_ADMIN_USER=user
+    volumes:
+      - ./observability/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./observability/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./observability/grafana/grafana.ini:/etc/grafana/grafana.ini
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    depends_on:
+      - fluent-bit
+    ports:
+      - "2100:3100"
+
+  fluent-bit:
+    image: grafana/fluent-bit-plugin-loki:latest
+    container_name: fluent-bit
+    ports:
+      - "24224:24224"
+    environment:
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./observability/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
+
   product-service:
     depends_on:
       - ds-postgres
       - config-service
+      - fluent-bit
+      - ds-keycloak
     image: zena07/product-service
     container_name: product-service
     ports:
@@ -52,6 +88,11 @@ services:
       - SPRING_PROFILE_ACTIVE=dev
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
       - BPL_DEBUG_ENABLED=true
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
 
   order-service:
     depends_on:
