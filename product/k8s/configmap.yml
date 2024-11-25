@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-config
+  labels:
+    apps: product-service
+data:
+  application.yml: |-
+    server:
+      port: 3000
+      tomcat:
+        connection-timeout: 2s
+        threads:
+          max: 50
+          min-spare: 5
+      shutdown: graceful
+
+    spring:
+      lifecycle:
+        timeout-per-shutdown-phase: 15s
+      application:
+        name: product-service
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: http://localhost:8080/realms/PolarBookshop
+      datasource:
+        username: user
+        password: password
+        url: jdbc:postgresql://localhost:5431/product
+        hikari:
+          connection-timeout: 2000
+          maximum-pool-size: 5
+      jpa:
+        hibernate:
+          ddl-auto: validate
+        properties:
+          hibernate:
+            database-platform: org.hibernate.dialect.PostgreSQLDialect
+            format_sql: true
+        #        use_sql_comments: true
+        show-sql: true
+        open-in-view: false

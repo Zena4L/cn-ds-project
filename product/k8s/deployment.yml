@@ -45,4 +45,13 @@ spec:
               path: /actuator/health/readiness
             initialDelaySeconds: 10
             periodSeconds: 15
+          volumeMounts:
+            - mountPath: /workspace/config
+              name: product-config-volume
+        volumes:
+          - name: product-config-volume
+            configMap:
+              name: product-config
+              items:
+                - key: application.yml
 
