@@ -52,13 +52,13 @@ class ProductController(private val productService: ProductService) {
         val nextLink: Link = if (products.hasNext()) {
             linkTo(methodOn(ProductController::class.java).getAllProduct(page + 1, size)).withRel("next")
         } else {
-            Link.of("")
+              Link.of("/" + products.totalPages);
         }
 
         val previousLink: Link = if (products.hasPrevious()) {
             linkTo(methodOn(ProductController::class.java).getAllProduct(page - 1, size)).withRel("previous")
         } else {
-            Link.of("")
+              Link.of("/" + products.totalPages);
         }
 
         return PagedModel.of(
