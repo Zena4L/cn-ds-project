@@ -9,6 +9,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.Link
+import org.springframework.hateoas.PagedModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
 import org.springframework.http.HttpStatus
@@ -32,26 +34,47 @@ class ProductController(private val productService: ProductService) {
     }
 
     @GetMapping
-fun getAllProduct(
-    @RequestParam(defaultValue = "0") page: Int,
-    @RequestParam(defaultValue = "10") size: Int
-): CollectionModel<EntityModel<Product>> {
-    logger.info("Fetching all products")
-    val products = productService.getAllProducts(page, size)
-    val productModels = products.map { product ->
-        EntityModel.of(product,
-            linkTo(methodOn(ProductController::class.java).getProduct(product.id!!)).withSelfRel()
+    fun getAllProduct(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): CollectionModel<EntityModel<Product>> {
+        logger.info("Fetching all products")
+        val products = productService.getAllProducts(page, size)
+
+        val productModel = products.map { product ->
+            EntityModel.of(
+                product,
+                linkTo(methodOn(ProductController::class.java).getProduct(product.id!!)).withSelfRel(),
+                linkTo(methodOn(ProductController::class.java).getAllProduct(page, size)).withRel("products")
+            )
+        }.toList()
+
+        val nextLink: Link = if (products.hasNext()) {
+            linkTo(methodOn(ProductController::class.java).getAllProduct(page + 1, size)).withRel("next")
+        } else {
+            Link.of("")
+        }
+
+        val previousLink: Link = if (products.hasPrevious()) {
+            linkTo(methodOn(ProductController::class.java).getAllProduct(page - 1, size)).withRel("previous")
+        } else {
+            Link.of("")
+        }
+
+        return PagedModel.of(
+            productModel,
+            PagedModel.PageMetadata(size.toLong(), page.toLong(), products.totalElements),
+            nextLink,
+            previousLink
         )
     }
-    return CollectionModel.of(productModels,
-        linkTo(methodOn(ProductController::class.java).getAllProduct(page, size)).withSelfRel()
-    )
-}
+
     @GetMapping("/{id}")
     fun getProduct(@PathVariable("id") id: Int): EntityModel<Product> {
 
         logger.info("Fetching product with id : $id")
-        return EntityModel.of(productService.getProduct(id),
+        return EntityModel.of(
+            productService.getProduct(id),
             linkTo(methodOn(ProductController::class.java).getProduct(id)).withSelfRel(),
             linkTo(methodOn(ProductController::class.java).getAllProduct(0, 10)).withRel("products")
         )
