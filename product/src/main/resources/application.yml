@@ -21,18 +21,38 @@ spring:
     password: password
     url: jdbc:postgresql://localhost:5431/product
     hikari:
-      connection-timeout: 2000
+      connection-timeout: 20000
       maximum-pool-size: 5
+      max-lifetime: 900000
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: false
+      minimum-idle: 0
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
-        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    #        use_sql_comments: true
-    show-sql: false
+        jdbc:
+          batch_size: 15
+          time_zone: UTC
+        order_updates: true
+        order_inserts: true
+        connection:
+          provider_disables_autocommit: true
+        query:
+          in_clause_parameter_padding: true
+          fail_on_pagination_over_collection_fetch: true
+          plan_cache_max_size: 4096
     open-in-view: false
+    show-sql: true
+
   config:
     import: ""
   cloud:
@@ -59,4 +79,3 @@ management:
       show-components: always
       probes:
         enabled: true
-
