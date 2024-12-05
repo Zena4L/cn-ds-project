@@ -28,13 +28,7 @@ class ProductController(private val productService: ProductService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createProduct(@RequestBody @Valid request: ProductRequest): EntityModel<Product> {
-        logger.info("Creating product ${request.name}")
-        return EntityModel.of(
-            productService.createProduct(request),
-            linkTo(methodOn(ProductController::class.java).getAllProduct(0, 10)).withRel("products")
-        )
-    }
+    fun createProduct(@RequestBody @Valid request: ProductRequest) = productService.createProduct(request)
 
     @GetMapping
     fun getAllProduct(
@@ -84,13 +78,8 @@ class ProductController(private val productService: ProductService) {
     }
 
     @PatchMapping("/{id}")
-    fun updateProduct(@PathVariable("id") id: Int, @RequestBody productRequest: ProductUpdated) : EntityModel<Product>{
-      return EntityModel.of(
-            productService.updateProduct(id, productRequest),
-            linkTo(methodOn(ProductController::class.java).getProduct(id)).withSelfRel(),
-            linkTo(methodOn(ProductController::class.java).getAllProduct(0, 10)).withRel("products")
-        )
-    }
+    fun updateProduct(@PathVariable("id") id: Int, @RequestBody productRequest: ProductUpdated) =
+        productService.updateProduct(id, productRequest)
 
 
     @DeleteMapping("/{id}")
