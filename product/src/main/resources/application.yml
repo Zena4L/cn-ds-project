@@ -5,12 +5,15 @@ server:
     threads:
       max: 50
       min-spare: 5
+  shutdown: graceful
 
 spring:
   profiles:
     active: test-data,dev
   application:
     name: product-service
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
   security:
     oauth2:
       resourceserver:
