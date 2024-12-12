@@ -23,7 +23,7 @@ class ProductClient(private val webClient: WebClient) {
             .timeout(Duration.ofSeconds(3), Mono.empty())
             .onErrorResume { throwable ->
                 when (throwable) {
-                    is WebClientResponseException -> Mono.empty()
+                    is WebClientResponseException.NotFound -> Mono.empty()
                     else -> Mono.error(throwable)
                 }
             }
