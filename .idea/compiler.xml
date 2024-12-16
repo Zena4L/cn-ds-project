@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="delivery-service" />
         <module name="config-server" />
+        <module name="authServer" />
         <module name="product" />
         <module name="edge-service" />
       </profile>
@@ -15,6 +16,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="authServer" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="delivery-service" options="-parameters" />
       <module name="edge-service" options="-parameters" />

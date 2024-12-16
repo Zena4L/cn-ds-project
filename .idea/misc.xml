@@ -11,6 +11,7 @@
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
         <option value="$PROJECT_DIR$/edge-service/pom.xml" />
         <option value="$PROJECT_DIR$/delivery-service/pom.xml" />
+        <option value="$PROJECT_DIR$/authServer/pom.xml" />
       </list>
     </option>
   </component>

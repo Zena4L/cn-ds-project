@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig">
+    <option name="snapshotDb" value="false" />
+    <option name="snapshotDbValue" value="56bc90b5-206e-42e6-ab8b-c25d3835e0af" />
+    <option name="snapshotModelValue" value="authServer:authServer" />
+  </component>
+</project>

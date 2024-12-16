@@ -3,7 +3,6 @@ package org.cn.product.domain
 import org.cn.product.dtos.ProductRequest
 import org.cn.product.dtos.ProductUpdated
 import org.cn.product.exceptions.NotSuchProductException
-import org.cn.product.utils.ErrorMessageConstant
 import org.cn.product.utils.ErrorMessageConstant.NOT_FOUND_MESSAGE
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
