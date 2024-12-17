@@ -6,6 +6,14 @@
         <PersistenceKey key="services" />
         <PersistenceValue filter="[]" />
       </entry>
+      <entry>
+        <PersistenceKey key="issuesFilters" />
+        <PersistenceValue filter="{&quot;issueTypes&quot;:[],&quot;filters&quot;:[]}" />
+      </entry>
+      <entry>
+        <PersistenceKey key="globalErrorsFilters" />
+        <PersistenceValue filter="{&quot;endpoints&quot;:[],&quot;errorTypes&quot;:[],&quot;criticalities&quot;:[],&quot;handlingTypes&quot;:[]}" />
+      </entry>
     </state>
   </component>
 </project>

@@ -4,5 +4,7 @@
     <option name="snapshotDb" value="false" />
     <option name="snapshotDbValue" value="56bc90b5-206e-42e6-ab8b-c25d3835e0af" />
     <option name="snapshotModelValue" value="authServer:authServer" />
+    <option name="sourceModelValue" value="authServer:authServer" />
+    <option name="targetDbValue" value="56bc90b5-206e-42e6-ab8b-c25d3835e0af" />
   </component>
 </project>
