@@ -171,6 +171,10 @@ services:
     environment:
       - KEYCLOAK_ADMIN=user
       - KEYCLOAK_ADMIN_PASSWORD=password
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://ds-postgres:5432/keycloak
+      - KC_DB_USERNAME=user
+      - KC_DB_PASSWORD=password
     ports:
       - "8080:8080"
 
